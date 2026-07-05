@@ -271,6 +271,7 @@ After evaluation, I provided the fine-tuned model’s wrong predictions to ChatG
 I verified that conclusion using the confusion matrix and direct review of all 13 wrong predictions. I narrowed the final claim to what the evidence supported: the model never predicted Reasoned Analysis and over-predicted Help-Seeking, while the 6-epoch run introduced some Reaction predictions without improving overall accuracy.
 
 ## Repository Contents
+```
 ai201-project3-takemeter/
 ├── README.md
 ├── planning.md
@@ -278,7 +279,7 @@ ai201-project3-takemeter/
 │    └── dataset_200.csv
 ├── confusion_matrix.png
 └── evaluation_results.json
+```
 
 ## Demo Video
-
 [Watch my demo](https://drive.google.com/file/d/1YHsPUrhW7f7uX_SvrQ5bIBI9iHxRWNPC/view?usp=drive_link)
