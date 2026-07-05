@@ -206,7 +206,7 @@ This is a general discussion prompt. The author is curious about what other play
 
 **Text:** “Shotguns were handled poorly”  
 **True label:** Reasoned Analysis  
-**Prediction:** Help-Seeking  
+**Prediction:** Reaction
 **Confidence:** 0.46
 
 This post makes a clear balance argument: shotguns needed a nerf, but the specific nerf was wrong, and a different adjustment would have been better. The model failed to recognize the claim-plus-reason structure that defines Reasoned Analysis. This suggests that it did not learn to reliably detect support relationships such as mechanism, alternative, and gameplay consequence.
@@ -281,4 +281,4 @@ ai201-project3-takemeter/
 
 ## Demo Video
 
-[Add demo video link here]
+[Watch my demo](https://drive.google.com/file/d/1YHsPUrhW7f7uX_SvrQ5bIBI9iHxRWNPC/view?usp=drive_link)
