@@ -8,7 +8,7 @@ TakeMeter is a text-classification project for public r/VALORANT posts. The goal
 - Reasoned Analysis
 - Reaction
 
-I compared a zero-shot Groq baseline with a fine-tuned `distilbert-base-uncased` classifier trained on a manually reviewed dataset of 200 public r/VALORANT posts.
+I compared a zero-shot Groq baseline with a fine-tuned `distilbert-base-uncased` classifier trained on a labeled dataset of 200 public r/VALORANT posts.
 
 ## Community and Dataset
 
@@ -62,13 +62,12 @@ The held-out test set contained 17 Help-Seeking posts, 4 Reasoned Analysis posts
 
 
 ## Data Collection and Annotation Process
-1. If the author seeks guidance to resolve their own specific problem, decision, uncertainty, or situation, label the post **Help-Seeking**.
-2. Otherwise, remove emotion and personal-story details mentally. If a supported claim about a mechanic, balance issue, strategy, system, meta, or community issue remains, label it **Reasoned Analysis**.
-3. Otherwise, label it **Reaction**.
-4. General polls, discussion prompts, and invitations to share experiences are Reaction unless the author seeks help for a concrete personal situation.
-5. If a post remains ambiguous between Reasoned Analysis and Reaction after applying the rule, label it Reaction.
 
-The complete taxonomy and additional annotation clarifications are documented in [`planning.md`](planning.md).
+I started with a local collection of 400 publicly available r/VALORANT posts. Each retained example combines the post title and body into one `text` field.
+
+I excluded posts with missing, unreadable, or title-only text; posts whose meaning required an image or video; recruitment, promotion, or other non-discourse requests; and posts that did not fit one of the three labels.
+
+Each retained post was labeled using the taxonomy and decision rule above. Difficult or borderline cases were recorded in the `notes` field and reviewed before the final 200-example dataset was created.
 
 ## Hard Annotation Cases
 
@@ -231,14 +230,15 @@ These results show that six epochs alone did not solve the main problem. The mod
 
 ### Sample Classifications
 
-> Replace the final row below with one actual correct prediction from your Colab output. Do not invent a confidence score.
+The following per-example predictions were preserved from the final 6-epoch evaluation output.
 
 | Post | Predicted Label | Confidence | Correct? | Notes |
 | :--- | :--- | ---: | :--- | :--- |
-| “Does anyone remember Xirena” | Help-Seeking | 0.50 | No | Nostalgic sharing post incorrectly treated as Help-Seeking. |
-| “Is there a player card you’re chasing after?” | Help-Seeking | 0.48 | No | General discussion prompt confused with Help-Seeking. |
-| “Shotguns were handled poorly” | Help-Seeking | 0.46 | No | Supported balance argument missed by the model. |
-| `[PASTE ONE CORRECT TEST POST TITLE HERE]` | `[PREDICTED LABEL]` | `[CONFIDENCE]` | Yes | Explain why the predicted label is reasonable under the taxonomy. |
+| “Does anyone remember Xirena” | Help-Seeking | 0.50 | No | Nostalgic personal-sharing post incorrectly classified as Help-Seeking. |
+| “Is there a player card you’re chasing after?” | Help-Seeking | 0.48 | No | General discussion prompt incorrectly classified as Help-Seeking. |
+| “Shotguns were handled poorly” | Help-Seeking | 0.46 | No | Supported balance claim incorrectly classified as Help-Seeking. |
+
+> **Documentation limitation:** The final confusion matrix confirms 17 correct predictions in the 30-example test set. However, after the final evaluation, Colab GPU access became unavailable and the saved checkpoint was no longer accessible. I could not recover a per-item correct prediction and confidence without rerunning the model, so I have not reconstructed or fabricated one from aggregate results.
 
 ## Reflection: Intended Labels vs. Learned Behavior
 
@@ -274,8 +274,8 @@ I verified that conclusion using the confusion matrix and direct review of all 1
 ai201-project3-takemeter/
 ├── README.md
 ├── planning.md
-├── datas/               # data documents
-│    └──  dataset_200.csv
+├── datas/
+│    └── dataset_200.csv
 ├── confusion_matrix.png
 └── evaluation_results.json
 
