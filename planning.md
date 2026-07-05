@@ -1,6 +1,6 @@
 ## Community: 
 
-I chose r/VALORANT on reddit because it is an active public community with weekly 9k+ posts. It is a good classification setting because posts vary substantially in intent: some users want specific help, some show their knowledge/skills about the game, and others mainly share reactions, clips, achievements, or frustrations. This variation makes the three labels meaningful rather than artificial.
+I chose r/VALORANT on reddit because it is an active public community with varied, text-based discussion. It is a good classification setting because posts vary substantially in intent: some users want specific help, some show their knowledge/skills about the game, and others mainly share reactions, clips, achievements, or frustrations. This variation makes the three labels meaningful rather than artificial.
 
 ## Labels: 
 
@@ -31,27 +31,31 @@ Reaction means that the author mainly shares an emotion, experience, achievement
 ## Hard edge cases: 
 The hardest cases are frustrated posts that contain both a question and a complaint, plus opinion posts that include one or two reasons.
 
-For a frustrated question, I check the comment see whether the author is genuinely seeking an answer, diagnosis, recommendation, feedback, or confirmation about their own situation. If yes, I label it Help-Seeking even when the post contains emotional language or a detailed personal story.
+For a frustrated question, I check the comments see whether the author is genuinely seeking an answer, diagnosis, recommendation, feedback, or confirmation about their own situation. If yes, I label it Help-Seeking even when the post contains emotional language or a detailed personal story.
 
 For a complaint or opinion post, I apply the Emotion-Removal Test. I remove the author’s personal frustration, personal history, and agreement-seeking language, then ask whether a concrete claim about a mechanic, system, balance issue, strategy, meta, or community issue remains. I only use Reasoned Analysis when that remaining claim has a concrete reason, comparison, example, mechanism, or consequence.
 
-General polls, “what do you think?” prompts, and invitations to share experiences are Reaction unless the author is seeking help for a specific personal problem. If a case remains genuinely ambiguous after applying these rules, I label it Reaction.
+If a case remains genuinely ambiguous after applying these rules, I label it Reaction.
 
 #### Annotation Decision Rule
 
 1. **Is the author asking for an answer, recommendation, diagnosis, feedback, or confirmation?**  
+   Examples include asking how to improve, whether a setting or mechanic works, which option to choose, why something happened, or whether their own decision was correct.
    - Yes → **Help-Seeking**  
    - No → continue.
 
-2. **Apply the Emotion-Removal Test.**  
+   General polls, preference prompts, requests for shared experiences, and questions meant mainly to start discussion do not count as Help-Seeking.
+
+1. **Apply the Emotion-Removal Test.**  
    Mentally remove personal feelings, personal story details, and agreement-seeking language, such as:  
    - “I’m so tired of this.”  
    - “I want to uninstall.”  
    - “My teammates are awful.”  
    - “Does anyone else feel this way?”  
 
-   Then ask:Does it make a concrete claim about a mechanic, balance, strategy, system, meta, or community issue?
-   Is that claim supported by at least one reason, comparison, mechanism, example, or consequence? 
+   Then ask:
+   - Does it make a concrete claim about a mechanic, balance, strategy, system, meta, or community issue?
+   - Is that claim supported by at least one reason, comparison, mechanism, example, or consequence? 
    - Yes → **Reasoned Analysis**  
    - No → **Reaction**
 
@@ -67,28 +71,36 @@ I began with a local collection of 400 public r/VALORANT posts. Each retained ex
 
 I removed posts with missing, unreadable, or title-only text; posts whose meaning depended on an image or video; recruitment, promotion, or other non-discourse requests; and posts that did not fit a valid label.
 
-After cleaning and re-annotating the dataset under the finalized taxonomy, the current dataset contains 223 labeled posts:
-- Help-Seeking: 132 posts (59.2%)
-- Reasoned Analysis: 28 posts (12.6%)
-- Reaction: 63 posts (28.3%)
+After cleaning and re-annotating the dataset under the finalized taxonomy, the current dataset contains 200 labeled posts:
+- Help-Seeking: 109 posts (54.5%)
+- Reasoned Analysis: 28 posts (14.0%)
+- Reaction: 63 posts (31.5%)
 
-No label exceeds 70% of the final dataset. I also kept notes for some non-obvious cases so that I can later document at least three difficult annotation decisions in the README.
+No label exceeds 70% of the final dataset. 
 
-Reasoned Analysis is the underrepresented label. Rather than deleting useful Help-Seeking examples, the preferred next data-collection step would be to collect more posts that make supported claims about mechanics, balance, maps, ranked systems, agent design, or strategy. For the current time-limited training run, I will use all 253 examples, use a stratified split, and explicitly discuss the class imbalance when interpreting metrics.
+I used a stratified 70/15/15 split:
+
+| Split | Examples |
+| :--- | ---: |
+| Train | 140 |
+| Validation | 30 |
+| Test | 30 |
+
+The held-out test set contains 17 Help-Seeking posts, 4 Reasoned Analysis posts, and 9 Reaction posts. Because Reasoned Analysis has only four test examples, I will interpret that class’s metrics cautiously.
 
 
 ## Evaluation Metrics
 
 I will use overall accuracy, but accuracy alone is not sufficient because Help-Seeking is the largest class. A model could achieve misleadingly high accuracy by over-predicting Help-Seeking.
 
-I will therefore also use:
+I therefore also used:
 
 - Per-class precision, recall, and F1 score, to show how well the model handles each label.
 - Macro F1 score, because it weights all three labels equally rather than allowing the majority class to dominate the result.
 - A confusion matrix, to identify which categories are most often confused, especially Help-Seeking versus Reaction and Reasoned Analysis versus Reaction.
 - A comparison with the Groq zero-shot baseline on the exact same held-out test set, so that the difference between prompt-only classification and fine-tuning is meaningful.
 
-The test split is small, especially for Reasoned Analysis, so I will interpret its class-level metric carefully rather than treating one score as conclusive.
+The test split is small, especially for Reasoned Analysis, so I interpret its class-level metric carefully rather than treating one score as conclusive.
 
 ## Definition of Success
 
@@ -104,24 +116,21 @@ For a real community tool, I would require a stronger standard before using the 
 
 ---
 ## AI Tool Plan 
-I will use ChatGPT to generate 5–10 synthetic Valorant posts designed to sit near the decision boundaries between:
+I will use ChatGPT to find 5–10 ambiguous Valorant posts that sit near the decision boundaries between:
 
 Help-Seeking vs Reaction
 Help-Seeking vs Reasoned Analysis
 Reasoned Analysis vs Reaction
 
-These synthetic examples will only be used to test the clarity of my label definitions and will not be included in the training dataset.
-**For label stress-testing**, I will conceptually use ChatGPT to review my label definitions and consider a small number of borderline cases across the three labels above. The goal is to check whether the taxonomy is sufficiently precise for consistent manual annotation. If cases are difficult to classify consistently, I will refine the labeling guidelines before proceeding with large-scale annotation.
-
-**For failure analysis**, , I will not use automated pre-labeling. All training examples will be manually labeled according to the finalized taxonomy to ensure consistency and avoid propagating model bias. 
 ### Label stress-testing: 
-Give the AI your label definitions and edge case description, and ask it to generate 5–10 posts that sit at the boundary between two labels. If it produces posts you can't classify cleanly, your definitions need tightening — do that now, before you annotate 200 examples.
-### Annotation assistance: 
-ChatGPT assisted with taxonomy refinement and review of difficult annotation cases. I will not treat an AI suggestion as a final label without checking the post against the written decision rule. The final dataset contains no synthetic examples, and the `notes` column labeling decisions. In the README, I will disclose that AI assisted the label-design and ambiguous-case review process.
-### Failure analysis: 
-Plan to give your list of wrong predictions to an AI tool and ask it to identify patterns before you write up your evaluation. Note what you'll look for and how you'll verify the patterns yourself.
+I used ChatGPT to review the label definitions and selected boundary cases, especially Help-Seeking versus Reaction and Reasoned Analysis versus Reaction. This helped identify that question form alone was too broad for Help-Seeking. I refined the taxonomy to exclude general polls, discussion prompts, and invitations for shared experiences. Synthetic or exploratory examples were not added to the final dataset.
 
-will manually review misclassified test examples after evaluation. I may optionally use ChatGPT to help summarize recurring error patterns, but all conclusions will be verified through direct inspection of the data.
+
+### Annotation assistance: 
+ChatGPT was used to discuss taxonomy wording and selected difficult annotation cases. I reviewed the final retained examples against the written decision rule rather than treating an AI suggestion as an automatic final label. The final dataset contains no synthetic examples.
+
+### Failure analysis: 
+After evaluation, I used ChatGPT to help identify candidate patterns among the fine-tuned model’s wrong predictions. I verified the final conclusions by checking the confusion matrix and manually reviewing the 13 wrong predictions. The final analysis focuses on the model’s failure to predict Reasoned Analysis and its tendency to confuse discussion-style Reaction posts with Help-Seeking.
 
 ---
 
