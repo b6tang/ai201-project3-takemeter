@@ -6,7 +6,7 @@ I chose r/VALORANT on reddit because it is an active public community with varie
 
 | Label     | Definition      | Primary Drive / Core Intent  |
 | :-------- | :-------------- | :-------------------------- |
-| **Help-Seeking**   | The author wants an answer, diagnosis, recommendation, feedback, or confirmation about a specific Valorant question, problem, decision, or situation.| **Seeking Guidance:** Driven by a question or problem that needs an answer, solution, or outside feedback.  |
+| **Help-Seeking**   | The author seeks guidance, explanations, recommendations, diagnoses, factual information, or confirmation about their own question, problem, decision, or situation.| **Seeking Guidance:** Driven by a question or problem that needs an answer, solution, or outside feedback.  |
 | **Reasoned Analysis** | The author explains, evaluates, or argues a point about Valorant. The post's main claim is supported by at least one concrete reason, game mechanic, comparison, example, or consequence.  | **Knowledge / Insight Sharing:** Driven mainly by explaining or supporting a viewpoint about a game mechanic, balance, strategy, system, meta, or community issue. Emotion may appear, but it is not the main point. |
 | **Reaction**          | The author mainly shares a clip, Ace, rank, skin, experience, emotion, meme, or opinion. This includes rants or complaints where reasons mainly justify the author's feelings instead of supporting a broader point about the game. | **Emotional / Experiential Expression:** Driven mainly by venting, bragging, celebrating, complaining, joking, or sharing a personal moment.|
 
@@ -129,8 +129,11 @@ I used ChatGPT to review the label definitions and selected boundary cases, espe
 ### Annotation assistance: 
 ChatGPT was used to discuss taxonomy wording and selected difficult annotation cases. I reviewed the final retained examples against the written decision rule rather than treating an AI suggestion as an automatic final label. The final dataset contains no synthetic examples.
 
-### Failure analysis: 
-After evaluation, I used ChatGPT to help identify candidate patterns among the fine-tuned model’s wrong predictions. I verified the final conclusions by checking the confusion matrix and manually reviewing the 13 wrong predictions. The final analysis focuses on the model’s failure to predict Reasoned Analysis and its tendency to confuse discussion-style Reaction posts with Help-Seeking.
+### Failure analysis:
+
+After evaluation, I used ChatGPT to help identify candidate patterns among the fine-tuned model’s wrong predictions. I verified the final conclusions by checking the confusion matrix and manually reviewing all 11 wrong predictions.
+
+The final analysis focuses on the model’s tendency to over-predict Help-Seeking. It correctly identified one Reasoned Analysis post and three Reaction posts, but classified three Reasoned Analysis posts and six Reaction posts as Help-Seeking. It also missed two Help-Seeking posts when their frustrated tone resembled Reaction.
 
 ---
 
